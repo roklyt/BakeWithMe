@@ -5,6 +5,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
@@ -45,11 +46,17 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
         /* find all views */
         ErrorMessageDisplay = findViewById(R.id.error_message);
 
-        RecyclerView = findViewById(R.id.recyclerview_main);
+
 
         LoadingIndicator = findViewById(R.id.pb_loading_indicator);
+        if((RecyclerView = findViewById(R.id.recyclerview_main_linear)) != null ){
+            RecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        }else{
+            RecyclerView = findViewById(R.id.recyclerview_main_grid);
+            RecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        }
 
-        RecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
 
         RecipeAdapter = new RecipeAdapter(this, RecipesList);
         RecyclerView.setAdapter(RecipeAdapter);
