@@ -3,10 +3,16 @@ package com.example.rokly.bakewithme.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Recipes implements Parcelable {
+
+
 
     public static final String PARCELABLE_KEY = "parcelable_key";
     public final static Parcelable.Creator<Recipes> CREATOR = new Parcelable.Creator<Recipes>() {
+
         @Override
         public Recipes createFromParcel(Parcel parcel) {
             return new Recipes(parcel);
@@ -18,17 +24,26 @@ public class Recipes implements Parcelable {
         }
 
     };
+
     private String Id;
     private String Name;
+    private List<Ingredients> Ingredients;
+    private List<Steps> Steps;
 
-    public Recipes(String id, String name) {
+    public Recipes(String id, String name, List<Ingredients> ingredients, List<Steps> steps) {
         Id = id;
         Name = name;
+        Ingredients = ingredients;
+        Steps = steps;
     }
 
     private Recipes(Parcel in) {
         Id = in.readString();
         Name = in.readString();
+        Ingredients = new ArrayList<Ingredients>();
+        in.readList(this.Ingredients, Ingredients.class.getClassLoader());
+        Steps = new ArrayList<Steps>();
+        in.readList(this.Steps, Steps.class.getClassLoader());
     }
 
     public String getId() {
@@ -39,13 +54,9 @@ public class Recipes implements Parcelable {
         return Name;
     }
 
-    @Override
-    public String toString() {
-        return "Recipe{" +
-                "Id='" + Id + '\'' +
-                ", Name='" + Name + '\'' +
-                '}';
-    }
+    public List<Ingredients> getIngredients(){return Ingredients;};
+
+    public List<Steps> getSteps(){return Steps;};
 
     @Override
     public int describeContents() {
@@ -56,5 +67,7 @@ public class Recipes implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(Id);
         parcel.writeString(Name);
+        parcel.writeList(Ingredients);
+        parcel.writeList(Steps);
     }
 }

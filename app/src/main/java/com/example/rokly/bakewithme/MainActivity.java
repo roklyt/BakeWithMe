@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
     /* recyclerView to populate all recipes*/
     private RecyclerView RecyclerView;
     /* List of all recipes*/
-    private List<Recipes> RecipesList = new ArrayList<>();
+    private static ArrayList<Recipes> RecipesList = new ArrayList<>();
     /* Error text view*/
     private TextView ErrorMessageDisplay;
     /* Progress bar as indicator */
@@ -57,16 +57,22 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
         }
 
 
+        if(savedInstanceState != null && savedInstanceState.containsKey(Recipes.PARCELABLE_KEY)){
+            List<Recipes> recipes = savedInstanceState.getParcelableArrayList(Recipes.PARCELABLE_KEY);
+            RecipeAdapter = new RecipeAdapter(this, recipes);
+            RecyclerView.setAdapter(RecipeAdapter);
 
-        RecipeAdapter = new RecipeAdapter(this, RecipesList);
-        RecyclerView.setAdapter(RecipeAdapter);
+        }else{
+            RecipeAdapter = new RecipeAdapter(this, RecipesList);
+            RecyclerView.setAdapter(RecipeAdapter);
 
-        /* If network is available proceed else show error message */
-        if (checkNetwork()) {
-            loadRecipes();
-        } else {
-            Toast.makeText(this, getString(R.string.error_no_network), Toast.LENGTH_LONG).show();
-            showErrorMessage();
+            /* If network is available proceed else show error message */
+            if (checkNetwork()) {
+                loadRecipes();
+            } else {
+                Toast.makeText(this, getString(R.string.error_no_network), Toast.LENGTH_LONG).show();
+                showErrorMessage();
+            }
         }
 
     }
@@ -97,6 +103,13 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
 
     private void loadRecipes(){
         new FetchRecipesTask().execute();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        ArrayList<Recipes> recipesContents = RecipesList;
+        outState.putParcelableArrayList(Recipes.PARCELABLE_KEY, recipesContents);
     }
 
     @Override
@@ -137,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
             /* Hide the loading bar */
             LoadingIndicator.setVisibility(View.INVISIBLE);
             if (recipeData != null) {
+                RecipesList = new ArrayList<>(recipeData);
                 showRecipeDataView();
                 /* set the new data to the adapter */
                 RecipeAdapter.setRecipeData(recipeData);
