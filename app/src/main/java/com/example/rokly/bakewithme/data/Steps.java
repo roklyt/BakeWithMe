@@ -36,6 +36,7 @@ public class Steps implements Parcelable {
         Id = in.readInt();
         ShortDescription = in.readString();
         Description = in.readString();
+        VideoUrl = in.readString();
     }
 
     public int getId() {

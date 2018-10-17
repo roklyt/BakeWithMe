@@ -1,6 +1,7 @@
 package com.example.rokly.bakewithme;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -115,6 +116,9 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
     @Override
     public void onClick(Recipes currentRecipe) {
         Toast.makeText(this, "Clicked " + currentRecipe.getName(), Toast.LENGTH_LONG).show();
+        Intent intentToStartDetailActivity = new Intent(this, RecipeDetailActivity.class);
+        intentToStartDetailActivity.putExtra(Recipes.PARCELABLE_KEY, currentRecipe);
+        startActivity(intentToStartDetailActivity);
     }
 
     /* Async Task to make an url request against the given link to get the recipe list*/

@@ -5,13 +5,11 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
-public class RecipeDetailFragment extends Fragment {
+public class RecipeStepsIngredientsFragment extends Fragment {
 
     // Mandatory empty constructor
-    public RecipeDetailFragment() {
+    public RecipeStepsIngredientsFragment() {
     }
 
     // Inflates the detail view
@@ -19,7 +17,7 @@ public class RecipeDetailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
+        final View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
 
         // Return the root view

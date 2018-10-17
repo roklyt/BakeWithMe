@@ -41,7 +41,7 @@ public class RecipeJsonUtil {
         final String STEP_ID = "id";
         final String STEP_SHORT_DESCRIPTION = "shortDescription";
         final String STEP_DESCRIPTION = "description";
-        final String STEP_VIDEO_URL = "videoUrl";
+        final String STEP_VIDEO_URL = "videoURL";
 
         JSONArray jsonArray = new JSONArray(recipeJsonStr);
 
