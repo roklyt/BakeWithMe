@@ -9,8 +9,8 @@
     <!-- Display the recipe detail fragment -->
     <fragment
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/master_list_fragment"
-        android:name="com.example.rokly.bakewithme.RecipeStepsIngredientsFragment"
+        android:id="@+id/recipe_detail_fragment"
+        android:name="com.example.rokly.bakewithme.RecipeDetailStepsIngredientsFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
