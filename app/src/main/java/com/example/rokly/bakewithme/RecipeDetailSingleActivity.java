@@ -24,6 +24,7 @@ public class RecipeDetailSingleActivity extends AppCompatActivity {
             steps = intent.getParcelableExtra(STEPS);
             RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
             recipeDetailSingleStepsFragment.setCurrentStep(steps);
+            recipeDetailSingleStepsFragment.setContext(this);
             setContentView(R.layout.activity_recipe_single_detail);
         }else if(intent.hasExtra(INGREDIENTS)){
             ingredients = intent.getParcelableExtra(INGREDIENTS);

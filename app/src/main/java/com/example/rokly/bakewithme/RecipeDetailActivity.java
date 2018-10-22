@@ -32,7 +32,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             RecipeDetailStepsFragment recipeDetailStepsFragment = new RecipeDetailStepsFragment();
             recipeDetailStepsFragment.setCurrentRecipe(currentRecipe);
 
-
         }
 
         RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();

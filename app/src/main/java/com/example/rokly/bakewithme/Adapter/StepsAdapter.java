@@ -42,7 +42,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsAdapter
         Steps steps = StepsList.get(position);
 
         /* Set the text from the recipe to the textview */
-        forecastAdapterViewHolder.StepsTextView.setText(steps.getDescription());
+        forecastAdapterViewHolder.StepsTextView.setText(steps.getShortDescription());
     }
 
     @Override
