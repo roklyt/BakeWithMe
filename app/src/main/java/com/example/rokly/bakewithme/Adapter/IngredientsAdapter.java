@@ -10,24 +10,24 @@ import android.widget.TextView;
 import com.example.rokly.bakewithme.R;
 import com.example.rokly.bakewithme.data.Ingredients;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 
 public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.IngredientsAdapterViewHolder> {
 
-    private final IngredientsAdapter.IngredientsAdapterOnClickHandler ClickHandler;
     /* List for all ingredients*/
     private List<Ingredients> IngredientsList;
 
 
-    public IngredientsAdapter(IngredientsAdapter.IngredientsAdapterOnClickHandler clickHandler, List<Ingredients> ingredientsList) {
-        ClickHandler = clickHandler;
+    public IngredientsAdapter(List<Ingredients> ingredientsList) {
         IngredientsList = ingredientsList;
     }
 
     @Override
     public IngredientsAdapter.IngredientsAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.recipe_recycle_item;
+        int layoutIdForListItem = R.layout.recipe_ingredients_recycle_item;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
@@ -41,6 +41,8 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
         /* Set the text from the steps to the textview */
         forecastAdapterViewHolder.IngredientsTextView.setText(ingredients.getIngredient());
+        forecastAdapterViewHolder.QuantityTextView.setText(ingredients.getQuantity() + ":");
+        forecastAdapterViewHolder.MeasueTextView.setText(ingredients.getMeasure());
     }
 
     @Override
@@ -59,19 +61,16 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         void onClick(Ingredients currentStep);
     }
 
-    public class IngredientsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class IngredientsAdapterViewHolder extends RecyclerView.ViewHolder{
         TextView IngredientsTextView;
+        TextView QuantityTextView;
+        TextView MeasueTextView;
 
         public IngredientsAdapterViewHolder(View view) {
             super(view);
-            IngredientsTextView = view.findViewById(R.id.recipe_text_recyclerview);
-            view.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View v) {
-            Ingredients currentStep = IngredientsList.get(getAdapterPosition());
-            ClickHandler.onClick(currentStep);
+            IngredientsTextView = view.findViewById(R.id.tv_ingredients_ingredient);
+            QuantityTextView = view.findViewById(R.id.tv_ingredients_quantity);
+            MeasueTextView = view.findViewById(R.id.tv_ingredients_measure);
         }
     }
 }

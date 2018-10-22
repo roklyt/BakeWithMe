@@ -3,13 +3,15 @@ package com.example.rokly.bakewithme;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.TextView;
 
 import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.data.Steps;
 
 public class RecipeDetailSingleActivity extends AppCompatActivity {
-    private Steps steps;
+    private static Steps steps;
+    private static Recipes ingredients;
+    public static final String STEPS = "steps";
+    public static final String INGREDIENTS = "ingredients";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,15 +20,17 @@ public class RecipeDetailSingleActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
 
-        if (intent.hasExtra(Recipes.PARCELABLE_KEY)){
-            steps = intent.getParcelableExtra(Recipes.PARCELABLE_KEY);
+        if (intent.hasExtra(STEPS)){
+            steps = intent.getParcelableExtra(STEPS);
+            RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
+            recipeDetailSingleStepsFragment.setCurrentStep(steps);
+            setContentView(R.layout.activity_recipe_single_detail);
+        }else if(intent.hasExtra(INGREDIENTS)){
+            ingredients = intent.getParcelableExtra(INGREDIENTS);
+            RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
+            recipeDetailIngredientsFragment.setCurrentRecipe(ingredients);
+            recipeDetailIngredientsFragment.setContext(this);
+            setContentView(R.layout.activity_recipe_detail_ingredients);
         }
-
-        setContentView(R.layout.activity_recipe_single_detail);
-
-    }
-
-    public Steps getSteps(){
-        return steps;
     }
 }

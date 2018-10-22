@@ -21,23 +21,23 @@ public class Ingredients implements Parcelable {
 
     };
 
-    private int Quantity;
+    private String Quantity;
     private String Measure;
     private String Ingredient;
 
-    public Ingredients(int quantity, String measure, String ingredient) {
+    public Ingredients(String quantity, String measure, String ingredient) {
         Quantity = quantity;
         Measure = measure;
         Ingredient = ingredient;
     }
 
     private Ingredients(Parcel in) {
-        Quantity = in.readInt();
+        Quantity = in.readString();
         Measure = in.readString();
         Ingredient = in.readString();
     }
 
-    public int getQuantity() {
+    public String getQuantity() {
         return Quantity;
     }
 
@@ -56,7 +56,7 @@ public class Ingredients implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(Quantity);
+        parcel.writeString(Quantity);
         parcel.writeString(Measure);
         parcel.writeString(Ingredient);
     }

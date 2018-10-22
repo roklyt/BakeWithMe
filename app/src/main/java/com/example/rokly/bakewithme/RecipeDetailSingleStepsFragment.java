@@ -14,13 +14,15 @@ import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.data.Steps;
 
-public class RecipeDetailSingleStepsIngredientFragment extends Fragment{
+import java.util.ArrayList;
 
-    private Steps currentStep;
+public class RecipeDetailSingleStepsFragment extends Fragment{
+
+    private static Steps currentStep;
     private TextView textView;
 
     // Mandatory empty constructor
-    public RecipeDetailSingleStepsIngredientFragment() {
+    public RecipeDetailSingleStepsFragment() {
     }
 
     // Inflates the detail view
@@ -28,8 +30,6 @@ public class RecipeDetailSingleStepsIngredientFragment extends Fragment{
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        RecipeDetailSingleActivity recipeDetailSingleActivity = new RecipeDetailSingleActivity();
-        currentStep = recipeDetailSingleActivity.getSteps();
 
         final View rootView = inflater.inflate(R.layout.fragment_recipe_single_detail, container, false);
 
@@ -39,5 +39,13 @@ public class RecipeDetailSingleStepsIngredientFragment extends Fragment{
         return rootView;
     }
 
+    public void setCurrentStep(Steps currentStep){
+        this.currentStep = currentStep;
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle currentState) {
+
+
+    }
 }

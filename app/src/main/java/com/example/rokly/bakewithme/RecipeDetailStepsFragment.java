@@ -3,6 +3,7 @@ package com.example.rokly.bakewithme;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,11 +18,13 @@ import com.example.rokly.bakewithme.data.Steps;
 
 import java.util.List;
 
-public class RecipeDetailStepsIngredientsFragment extends Fragment implements com.example.rokly.bakewithme.Adapter.StepsAdapter.StepsAdapterOnClickHandler{
+public class RecipeDetailStepsFragment extends Fragment implements com.example.rokly.bakewithme.Adapter.StepsAdapter.StepsAdapterOnClickHandler{
 
-    private Recipes currentRecipe;
+    private static Recipes currentRecipe;
     private RecyclerView recyclerView;
     private StepsAdapter stepsAdapter;
+
+    private static final String CURRENT_RECIPE = "currentRecipe";
 
     // Define a new interface OnImageClickListener that triggers a callback in the host activity
     OnImageClickListener mCallback;
@@ -47,7 +50,7 @@ public class RecipeDetailStepsIngredientsFragment extends Fragment implements co
     }
 
     // Mandatory empty constructor
-    public RecipeDetailStepsIngredientsFragment() {
+    public RecipeDetailStepsFragment() {
     }
 
     // Inflates the detail view
@@ -55,8 +58,11 @@ public class RecipeDetailStepsIngredientsFragment extends Fragment implements co
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        if(savedInstanceState != null){
+            currentRecipe = savedInstanceState.getParcelable(CURRENT_RECIPE);
+        }
+
         RecipeDetailActivity recipeDetailActivity = (RecipeDetailActivity) getActivity();
-        currentRecipe = recipeDetailActivity.getCurrentRecipe();
 
         final View rootView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
 
@@ -65,11 +71,9 @@ public class RecipeDetailStepsIngredientsFragment extends Fragment implements co
         stepsAdapter = new StepsAdapter(this, currentRecipe.getSteps());
         recyclerView.setAdapter(stepsAdapter);
 
-
         // Return the root view
         return rootView;
     }
-
 
     @Override
     public void onClick(Steps currentStep) {
@@ -78,4 +82,8 @@ public class RecipeDetailStepsIngredientsFragment extends Fragment implements co
     }
 
 
+
+    public void setCurrentRecipe(Recipes currentRecipe){
+      this.currentRecipe = currentRecipe;
+    }
 }
