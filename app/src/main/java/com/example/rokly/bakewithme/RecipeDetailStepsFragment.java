@@ -31,7 +31,7 @@ public class RecipeDetailStepsFragment extends Fragment implements com.example.r
 
     // OnImageClickListener interface, calls a method in the host activity named onImageSelected
     public interface OnImageClickListener {
-        void onImageSelected(Steps currentStep);
+        void onImageSelected(int position);
     }
 
     // Override onAttach to make sure that the container activity has implemented the callback
@@ -76,12 +76,15 @@ public class RecipeDetailStepsFragment extends Fragment implements com.example.r
     }
 
     @Override
-    public void onClick(Steps currentStep) {
-        mCallback.onImageSelected(currentStep);
-
+    public void onClick(int position) {
+        mCallback.onImageSelected(position);
     }
 
-
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(CURRENT_RECIPE, currentRecipe);
+    }
 
     public void setCurrentRecipe(Recipes currentRecipe){
       this.currentRecipe = currentRecipe;

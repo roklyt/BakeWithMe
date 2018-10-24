@@ -37,7 +37,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
-public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener {
+public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener, View.OnClickListener {
 
     private static final String TAG = RecipeDetailSingleStepsFragment.class.getSimpleName();
     private static Steps currentStep;
@@ -47,6 +47,11 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
     private static MediaSessionCompat mediaSession;
     private PlaybackStateCompat.Builder stateBuilder;
     private Context context;
+    private final static String CURRENT_POSITION = "currentPosition";
+    private final static String CURRENT_URL = "currentUrl";
+    private long currentPostion;
+    private String videoUrl;
+
 
     // Mandatory empty constructor
     public RecipeDetailSingleStepsFragment() {
@@ -63,7 +68,13 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         playerView = rootView.findViewById(R.id.playerView);
         context = getContext();
 
-        String videoUrl = currentStep.getVideoUrl();
+        videoUrl = currentStep.getVideoUrl();
+
+        if(savedInstanceState == null){
+            currentPostion = 0;
+        }else if(videoUrl.equals(savedInstanceState.getString(CURRENT_URL))){
+            currentPostion = savedInstanceState.getLong(CURRENT_POSITION);
+        }
 
         if(videoUrl == null || videoUrl.equals("")){
             playerView.setVisibility(View.GONE);
@@ -95,7 +106,8 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
     @Override
     public void onSaveInstanceState(Bundle currentState) {
-
+        currentState.putLong(CURRENT_POSITION, exoPlayer.getCurrentPosition());
+        currentState.putString(CURRENT_URL, videoUrl);
     }
 
     private void initializeMediaSession() {
@@ -150,8 +162,18 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     context, userAgent), new DefaultExtractorsFactory(), null, null);
             exoPlayer.prepare(mediaSource);
+            exoPlayer.seekTo(currentPostion);
             exoPlayer.setPlayWhenReady(true);
         }
+    }
+
+    /**
+     * Release ExoPlayer.
+     */
+    private void releasePlayer() {
+        exoPlayer.stop();
+        exoPlayer.release();
+        exoPlayer = null;
     }
 
     @Override
@@ -171,7 +193,6 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
     }
 
     @Override
@@ -184,6 +205,19 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
     }
 
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.back_button:
+                Toast.makeText(context, "onClick " + "CLicked back", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.forward_button:
+                Toast.makeText(context, "onClick " + "CLicked forward", Toast.LENGTH_LONG).show();
+                break;
+            default:
+            break;
+        }
+    }
     /**
      * Media Session Callbacks, where all external clients control the player.
      */
@@ -203,5 +237,25 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
             exoPlayer.seekTo(0);
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        exoPlayer.setPlayWhenReady(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        exoPlayer.setPlayWhenReady(true);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        releasePlayer();
+        mediaSession.setActive(false);
+    }
+
 
 }
