@@ -3,4 +3,5 @@
 
     <string name="error_no_data">We could not receive any data.\n\tPlease try again Later</string>
     <string name="error_no_network">No internet connection.</string>
+
 </resources>

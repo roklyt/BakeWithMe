@@ -7,11 +7,18 @@
     tools:context=".RecipeDetailSingleActivity">
 
     <!-- Display the recipe detail fragment -->
-    <fragment
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/recipe_ingredients_fragment"
-        android:name="com.example.rokly.bakewithme.RecipeDetailIngredientsFragment"
+    <FrameLayout
+        android:id="@+id/ingredients_container_single"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:scaleType="centerInside"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

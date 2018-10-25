@@ -1,16 +1,22 @@
 package com.example.rokly.bakewithme;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +43,7 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
-public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener, View.OnClickListener {
+public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener, View.OnClickListener{
 
     private static final String TAG = RecipeDetailSingleStepsFragment.class.getSimpleName();
     private static Steps currentStep;
@@ -51,12 +57,33 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
     private final static String CURRENT_URL = "currentUrl";
     private long currentPostion;
     private String videoUrl;
+    private static int size;
+    private static boolean isPhone;
+    OnButtonClickListener mCallback;
 
 
     // Mandatory empty constructor
     public RecipeDetailSingleStepsFragment() {
     }
 
+    public interface OnButtonClickListener {
+        void onButtonSelected(int buttonId);
+    }
+
+    // Override onAttach to make sure that the container activity has implemented the callback
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        // This makes sure that the host activity has implemented the callback interface
+        // If not, it throws an exception
+        try {
+            mCallback = (RecipeDetailSingleStepsFragment.OnButtonClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString()
+                    + " must implement OnImageClickListener");
+        }
+    }
     // Inflates the detail view
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,12 +103,6 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
             currentPostion = savedInstanceState.getLong(CURRENT_POSITION);
         }
 
-        if(videoUrl == null || videoUrl.equals("")){
-            playerView.setVisibility(View.GONE);
-        }else{
-            playerView.setVisibility(View.VISIBLE);
-        }
-
         initializeMediaSession();
         initializePlayer(Uri.parse(currentStep.getVideoUrl()));
 
@@ -89,8 +110,46 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         textView = rootView.findViewById(R.id.tv_instruction_step);
         textView.setText(currentStep.getDescription());
 
+        Button backButton = rootView.findViewById(R.id.back_button);
+        backButton.setOnClickListener(this);
 
+        Button forwardButton = rootView.findViewById(R.id.forward_button);
+        forwardButton.setOnClickListener(this);
 
+        if(!isPhone){
+            backButton.setVisibility(View.GONE);
+            forwardButton.setVisibility(View.GONE);
+        }else{
+            if(currentStep.getId() == size -1){
+                forwardButton.setVisibility(View.GONE);
+            }
+            if(currentStep.getId() == 0){
+                backButton.setVisibility(View.GONE);
+            }
+        }
+
+        if(videoUrl == null || videoUrl.equals("")){
+            playerView.setVisibility(View.GONE);
+        }else{
+            playerView.setVisibility(View.VISIBLE);
+
+            if(isLandscape() && isPhone){
+                backButton.setVisibility(View.GONE);
+                forwardButton.setVisibility(View.GONE);
+                textView.setVisibility(View.GONE);
+                playerView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT));
+                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+                if (Build.VERSION.SDK_INT < 16) {
+                    ((AppCompatActivity)getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                            WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                }else{
+                    View decorView = ((AppCompatActivity)getActivity()).getWindow().getDecorView();
+                    // Hide the status bar.
+                    int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
+                    decorView.setSystemUiVisibility(uiOptions);
+                }
+            }
+        }
 
         // Return the root view
         return rootView;
@@ -102,6 +161,23 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
     public void setContext(Context context){
         this.context = context;
+    }
+
+    public void setSize(int size){
+        this.size = size;
+    }
+
+    public void setPhone(boolean isPhone){
+        this.isPhone = isPhone;
+    }
+
+    private boolean isLandscape(){
+        int orientation = getResources().getConfiguration().orientation;
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -210,14 +286,17 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         switch (view.getId()) {
             case R.id.back_button:
                 Toast.makeText(context, "onClick " + "CLicked back", Toast.LENGTH_LONG).show();
+                mCallback.onButtonSelected(R.id.back_button);
                 break;
             case R.id.forward_button:
                 Toast.makeText(context, "onClick " + "CLicked forward", Toast.LENGTH_LONG).show();
+                mCallback.onButtonSelected(R.id.forward_button);
                 break;
             default:
-            break;
+                break;
         }
     }
+
     /**
      * Media Session Callbacks, where all external clients control the player.
      */

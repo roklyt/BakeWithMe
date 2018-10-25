@@ -12,7 +12,7 @@ import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.data.Steps;
 
-public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener{
+public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener{
 
     private Recipes currentRecipe;
     private static boolean twoPane = false;
@@ -50,6 +50,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
                 showStep = true;
                 RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
                 recipeDetailSingleStepsFragment.setCurrentStep(currentRecipe.getSteps().get(0));
+                recipeDetailSingleStepsFragment.setPhone(false);
+                recipeDetailSingleStepsFragment.setSize(currentRecipe.getSteps().size());
 
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.step_container, recipeDetailSingleStepsFragment)
@@ -89,6 +91,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             showSteps();
             RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
             recipeDetailSingleStepsFragment.setCurrentStep(currentRecipe.getSteps().get(position));
+            recipeDetailSingleStepsFragment.setPhone(false);
+            recipeDetailSingleStepsFragment.setSize(currentRecipe.getSteps().size());
 
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.step_container, recipeDetailSingleStepsFragment)
@@ -141,5 +145,10 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
         FrameLayout stepsFrameLayout = findViewById(R.id.step_container);
         stepsFrameLayout.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onButtonSelected(int buttonId) {
+
     }
 }
