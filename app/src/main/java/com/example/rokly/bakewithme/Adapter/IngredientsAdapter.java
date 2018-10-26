@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rokly.bakewithme.R;
@@ -41,8 +42,8 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
         /* Set the text from the steps to the textview */
         forecastAdapterViewHolder.IngredientsTextView.setText(ingredients.getIngredient());
-        forecastAdapterViewHolder.QuantityTextView.setText(ingredients.getQuantity() + ":");
-        forecastAdapterViewHolder.MeasueTextView.setText(ingredients.getMeasure());
+        forecastAdapterViewHolder.QuantityTextView.setText(ingredients.getQuantity());
+        forecastAdapterViewHolder.MeasueTextView.setImageResource(getMeasureImage(ingredients.getMeasure()));
     }
 
     @Override
@@ -64,13 +65,46 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
     public class IngredientsAdapterViewHolder extends RecyclerView.ViewHolder{
         TextView IngredientsTextView;
         TextView QuantityTextView;
-        TextView MeasueTextView;
+        ImageView MeasueTextView;
 
         public IngredientsAdapterViewHolder(View view) {
             super(view);
             IngredientsTextView = view.findViewById(R.id.tv_ingredients_ingredient);
             QuantityTextView = view.findViewById(R.id.tv_ingredients_quantity);
-            MeasueTextView = view.findViewById(R.id.tv_ingredients_measure);
+            MeasueTextView = view.findViewById(R.id.iv_ingredients_measure);
         }
+    }
+
+    private int getMeasureImage(String measureKind){
+        int imageId;
+
+        switch (measureKind){
+            case "CUP":
+                imageId = R.drawable.cup;
+                break;
+            case "TBLSP":
+                imageId = R.drawable.spoon;
+                break;
+            case "TSP":
+                imageId = R.drawable.teaspoon;
+                break;
+            case "K":
+                imageId = R.drawable.weight_kg;
+                break;
+            case "G":
+                imageId = R.drawable.weight_gramm;
+                break;
+            case "OZ":
+                imageId = R.drawable.weight_ounce;
+                break;
+            case "UNIT":
+                imageId = R.drawable.count;
+                break;
+            default:
+                imageId = R.drawable.question_mark;
+                break;
+        }
+
+        return imageId;
     }
 }

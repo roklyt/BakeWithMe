@@ -66,7 +66,7 @@ public class RecipeJsonUtil {
             for(int x = 0; x < ingredientArray.length(); x++){
                 JSONObject ingredientObject = ingredientArray.getJSONObject(x);
 
-                String quantity = String.valueOf(ingredientObject.getDouble(INGREDIENT_QUANTITY));
+                String quantity = getQuantity(ingredientObject.getDouble(INGREDIENT_QUANTITY));
                 String measure = ingredientObject.getString(INGREDIENT_MEASURE);
                 String ingredient = ingredientObject.getString(INGREDIENT_INGREDIENT);
 
@@ -90,5 +90,22 @@ public class RecipeJsonUtil {
             recipes.add(new Recipes(id, name, ingredients, steps));
         }
         return recipes;
+    }
+
+    private static String getQuantity(double num){
+        long iPart;
+        double fPart;
+        String returnString;
+
+        iPart = (long) num;
+        fPart = num - iPart;
+
+        if(fPart == 0){
+            returnString = String.valueOf(iPart);
+        }else{
+            returnString = String.valueOf(num);
+        }
+
+        return returnString;
     }
 }

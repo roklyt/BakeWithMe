@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
             List<Recipes> recipes = savedInstanceState.getParcelableArrayList(Recipes.PARCELABLE_KEY);
             RecipeAdapter = new RecipeAdapter(this, recipes);
             RecyclerView.setAdapter(RecipeAdapter);
-
+            LoadingIndicator.setVisibility(View.GONE);
         }else{
             RecipeAdapter = new RecipeAdapter(this, RecipesList);
             RecyclerView.setAdapter(RecipeAdapter);

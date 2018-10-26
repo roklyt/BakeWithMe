@@ -6,13 +6,14 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.data.Steps;
 
-public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener{
+public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailStepsFragment.OnIngredientsClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener{
 
     private Recipes currentRecipe;
     private static boolean twoPane = false;
@@ -39,7 +40,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             recipeDetailStepsFragment.setCurrentRecipe(currentRecipe);
             getSupportActionBar().setTitle(currentRecipe.getName());
         }
-
 
         setContentView(R.layout.activity_recipe_detail);
 
@@ -83,9 +83,8 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     }
 
     @Override
-    public void onImageSelected(int position) {
-        Toast.makeText(this, "RecipeDetailActivity " + position, Toast.LENGTH_LONG).show();
-
+    public void onImageSelected(int position, View view) {
+        view.findViewById(R.id.recipe_text_recyclerview).setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
         if(twoPane){
             showSteps();
@@ -102,28 +101,6 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
             final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
             intent.putExtra(RecipeDetailSingleActivity.STEPS, currentRecipe);
             intent.putExtra(RecipeDetailSingleActivity.POSITION, position);
-            intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
-            startActivity(intent);
-        }
-    }
-
-    public void onClickIngredients(View view){
-        Toast.makeText(this, "onImageSelected " + "CLicked", Toast.LENGTH_LONG).show();
-
-
-        if(twoPane){
-            showIngredients();
-            RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
-            recipeDetailIngredientsFragment.setContext(this);
-            recipeDetailIngredientsFragment.setCurrentRecipe(currentRecipe);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.ingredients_container, recipeDetailIngredientsFragment)
-                    .commit();
-
-
-        }else{
-            final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
-            intent.putExtra(RecipeDetailSingleActivity.INGREDIENTS, currentRecipe);
             intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
             startActivity(intent);
         }
@@ -150,5 +127,27 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @Override
     public void onButtonSelected(int buttonId) {
 
+    }
+
+    @Override
+    public void onIngredientsSelected(View view) {
+        view.findViewById(R.id.tv_detail_ingredient).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
+        if(twoPane){
+            showIngredients();
+            RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
+            recipeDetailIngredientsFragment.setContext(this);
+            recipeDetailIngredientsFragment.setCurrentRecipe(currentRecipe);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.ingredients_container, recipeDetailIngredientsFragment)
+                    .commit();
+
+
+        }else{
+            final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
+            intent.putExtra(RecipeDetailSingleActivity.INGREDIENTS, currentRecipe);
+            intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
+            startActivity(intent);
+        }
     }
 }

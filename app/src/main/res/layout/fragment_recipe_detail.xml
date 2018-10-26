@@ -1,10 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+
+<ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:scrollbarAlwaysDrawVerticalTrack="true">
+
+<android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:nestedScrollingEnabled="false"
     android:background="@color/colorTextIcons">
 
 
@@ -37,17 +43,14 @@
         android:id="@+id/tv_detail_ingredient"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
+        android:background="@drawable/touch_selector"
+        android:paddingStart="8dp"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="onClickIngredients"
+        android:gravity="center_vertical"
         android:paddingLeft="4dp"
         android:paddingTop="4dp"
         android:text="Ingredients"
-        android:gravity="center_vertical"
         android:textColor="@color/colorPrimaryText"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@+id/view3"
@@ -88,4 +91,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view3"></android.support.v7.widget.RecyclerView>
 
+
 </android.support.constraint.ConstraintLayout>
+</ScrollView>

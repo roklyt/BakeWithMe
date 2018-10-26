@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -110,10 +111,10 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         textView = rootView.findViewById(R.id.tv_instruction_step);
         textView.setText(currentStep.getDescription());
 
-        Button backButton = rootView.findViewById(R.id.back_button);
+        ImageButton backButton = rootView.findViewById(R.id.back_button);
         backButton.setOnClickListener(this);
 
-        Button forwardButton = rootView.findViewById(R.id.forward_button);
+        ImageButton forwardButton = rootView.findViewById(R.id.forward_button);
         forwardButton.setOnClickListener(this);
 
         if(!isPhone){
@@ -285,11 +286,9 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.back_button:
-                Toast.makeText(context, "onClick " + "CLicked back", Toast.LENGTH_LONG).show();
                 mCallback.onButtonSelected(R.id.back_button);
                 break;
             case R.id.forward_button:
-                Toast.makeText(context, "onClick " + "CLicked forward", Toast.LENGTH_LONG).show();
                 mCallback.onButtonSelected(R.id.forward_button);
                 break;
             default:
