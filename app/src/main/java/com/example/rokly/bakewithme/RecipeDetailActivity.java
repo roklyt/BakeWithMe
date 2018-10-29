@@ -13,7 +13,7 @@ import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.data.Steps;
 
-public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailStepsFragment.OnIngredientsClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener{
+public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener{
 
     private Recipes currentRecipe;
     private static boolean twoPane = false;
@@ -86,24 +86,46 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     public void onImageSelected(int position, View view) {
         view.findViewById(R.id.recipe_text_recyclerview).setBackgroundColor(getResources().getColor(R.color.colorAccent));
 
-        if(twoPane){
-            showSteps();
-            RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
-            recipeDetailSingleStepsFragment.setCurrentStep(currentRecipe.getSteps().get(position));
-            recipeDetailSingleStepsFragment.setPhone(false);
-            recipeDetailSingleStepsFragment.setSize(currentRecipe.getSteps().size());
+        if(position < 0){
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.step_container, recipeDetailSingleStepsFragment)
-                    .commit();
+            if(twoPane){
+                showIngredients();
+                RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
+                recipeDetailIngredientsFragment.setContext(this);
+                recipeDetailIngredientsFragment.setCurrentRecipe(currentRecipe);
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.ingredients_container, recipeDetailIngredientsFragment)
+                        .commit();
 
+
+            }else{
+                final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
+                intent.putExtra(RecipeDetailSingleActivity.INGREDIENTS, currentRecipe);
+                intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
+                startActivity(intent);
+            }
         }else{
-            final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
-            intent.putExtra(RecipeDetailSingleActivity.STEPS, currentRecipe);
-            intent.putExtra(RecipeDetailSingleActivity.POSITION, position);
-            intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
-            startActivity(intent);
+
+            if(twoPane){
+                showSteps();
+                RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
+                recipeDetailSingleStepsFragment.setCurrentStep(currentRecipe.getSteps().get(position));
+                recipeDetailSingleStepsFragment.setPhone(false);
+                recipeDetailSingleStepsFragment.setSize(currentRecipe.getSteps().size());
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.step_container, recipeDetailSingleStepsFragment)
+                        .commit();
+
+            }else{
+                final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
+                intent.putExtra(RecipeDetailSingleActivity.STEPS, currentRecipe);
+                intent.putExtra(RecipeDetailSingleActivity.POSITION, position);
+                intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
+                startActivity(intent);
+            }
         }
+
     }
 
     private void showIngredients(){
@@ -127,27 +149,5 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     @Override
     public void onButtonSelected(int buttonId) {
 
-    }
-
-    @Override
-    public void onIngredientsSelected(View view) {
-        view.findViewById(R.id.tv_detail_ingredient).setBackgroundColor(getResources().getColor(R.color.colorAccent));
-
-        if(twoPane){
-            showIngredients();
-            RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
-            recipeDetailIngredientsFragment.setContext(this);
-            recipeDetailIngredientsFragment.setCurrentRecipe(currentRecipe);
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.ingredients_container, recipeDetailIngredientsFragment)
-                    .commit();
-
-
-        }else{
-            final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
-            intent.putExtra(RecipeDetailSingleActivity.INGREDIENTS, currentRecipe);
-            intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
-            startActivity(intent);
-        }
     }
 }

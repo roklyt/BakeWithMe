@@ -1,10 +1,12 @@
 package com.example.rokly.bakewithme.Adapter;
 
 import android.content.Context;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.rokly.bakewithme.R;
@@ -27,7 +29,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
     @Override
     public RecipeAdapterViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         Context context = viewGroup.getContext();
-        int layoutIdForListItem = R.layout.recipe_recycle_item;
+        int layoutIdForListItem = R.layout.card_view_main;
         LayoutInflater inflater = LayoutInflater.from(context);
         boolean shouldAttachToParentImmediately = false;
 
@@ -36,12 +38,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
     }
 
     @Override
-    public void onBindViewHolder(RecipeAdapterViewHolder forecastAdapterViewHolder, int position) {
+    public void onBindViewHolder(RecipeAdapterViewHolder forecastAdapterViewHolder, final int position) {
         /*Get the current movie to find the correct poster path */
         Recipes recipes= RecipesList.get(position);
 
         /* Set the text from the recipe to the textview */
         forecastAdapterViewHolder.RecipeTextView.setText(recipes.getName());
+
     }
 
     @Override
@@ -62,6 +65,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecipeAdapter.RecipeAdap
 
     public class RecipeAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView RecipeTextView;
+        CardView CardView;
 
         public RecipeAdapterViewHolder(View view) {
             super(view);

@@ -1,5 +1,7 @@
 package com.example.rokly.bakewithme;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
             RecyclerView.setLayoutManager(new LinearLayoutManager(this));
         }else{
             RecyclerView = findViewById(R.id.recyclerview_main_grid);
-            RecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+            RecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         }
 
 
@@ -115,7 +117,14 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
 
     @Override
     public void onClick(Recipes currentRecipe) {
-        Toast.makeText(this, "Clicked " + currentRecipe.getName(), Toast.LENGTH_LONG).show();
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, MainActivity.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_image);
+
+        //Now update all widgets
+        BakeAppWidgetProvider.updateBakeWidgets(this, appWidgetManager, currentRecipe.getIngredients(),appWidgetIds);
+
+
         Intent intentToStartDetailActivity = new Intent(this, RecipeDetailActivity.class);
         intentToStartDetailActivity.putExtra(Recipes.PARCELABLE_KEY, currentRecipe);
         startActivity(intentToStartDetailActivity);

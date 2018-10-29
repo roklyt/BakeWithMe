@@ -38,16 +38,22 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsAdapter
 
     @Override
     public void onBindViewHolder(StepsAdapter.StepsAdapterViewHolder forecastAdapterViewHolder, int position) {
-        /*Get the current movie to find the correct poster path */
-        Steps steps = StepsList.get(position);
 
-        /* Set the text from the recipe to the textview */
-        forecastAdapterViewHolder.StepsTextView.setText(steps.getShortDescription());
+        if(position == 0){
+            forecastAdapterViewHolder.StepsTextView.setText("Ingredients");
+        }else{
+            /*Get the current movie to find the correct poster path */
+            Steps steps = StepsList.get(position -1);
+
+            /* Set the text from the recipe to the textview */
+            forecastAdapterViewHolder.StepsTextView.setText(steps.getShortDescription());
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return StepsList.size();
+        return StepsList.size() + 1;
     }
 
     /* Set the new Steps list to the adapter */
@@ -72,7 +78,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsAdapter
 
         @Override
         public void onClick(View v) {
-            ClickHandler.onClick(getAdapterPosition(), v);
+            ClickHandler.onClick(getAdapterPosition() -1, v);
         }
     }
 }

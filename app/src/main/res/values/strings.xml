@@ -3,5 +3,7 @@
 
     <string name="error_no_data">We could not receive any data.\n\tPlease try again Later</string>
     <string name="error_no_network">No internet connection.</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

@@ -2,6 +2,7 @@ package com.example.rokly.bakewithme;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -38,6 +39,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -104,9 +106,10 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
             currentPostion = savedInstanceState.getLong(CURRENT_POSITION);
         }
 
+        playerView.setDefaultArtwork(BitmapFactory.decodeResource
+                (getResources(), R.drawable.loading_please_wait));
         initializeMediaSession();
         initializePlayer(Uri.parse(currentStep.getVideoUrl()));
-
 
         textView = rootView.findViewById(R.id.tv_instruction_step);
         textView.setText(currentStep.getDescription());
@@ -130,17 +133,18 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         }
 
         if(videoUrl == null || videoUrl.equals("")){
-            playerView.setVisibility(View.GONE);
+            playerView.setDefaultArtwork(BitmapFactory.decodeResource
+                    (getResources(), R.drawable.no_video));
         }else{
-            playerView.setVisibility(View.VISIBLE);
-
+            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
             if(isLandscape() && isPhone){
                 backButton.setVisibility(View.GONE);
                 forwardButton.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
                 playerView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT));
+                playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
                 ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-                if (Build.VERSION.SDK_INT < 16) {
+                if (Build.VERSION.SDK_INT > 16) {
                     ((AppCompatActivity)getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 }else{
@@ -210,7 +214,6 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
         mediaSession.setPlaybackState(stateBuilder.build());
 
-
         // MySessionCallback has methods that handle callbacks from a media controller.
         mediaSession.setCallback(new MySessionCallback());
 
@@ -235,7 +238,7 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
             exoPlayer.addListener(this);
 
             // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(context, "ClassicalMusicQuiz");
+            String userAgent = Util.getUserAgent(context, "BakeWithMe");
             MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
                     context, userAgent), new DefaultExtractorsFactory(), null, null);
             exoPlayer.prepare(mediaSource);

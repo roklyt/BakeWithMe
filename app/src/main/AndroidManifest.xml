@@ -19,17 +19,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".RecipeDetailActivity" />
+        <activity android:name=".RecipeDetailSingleActivity" />
 
-        <receiver android:name=".Widget.BakeAppWidgetProvider" >
+        <receiver android:name=".BakeAppWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/bake_widget_info" />
-        </receiver>
 
-        <activity android:name=".RecipeDetailActivity" />
-        <activity android:name=".RecipeDetailSingleActivity"></activity>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/bake_app_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>
