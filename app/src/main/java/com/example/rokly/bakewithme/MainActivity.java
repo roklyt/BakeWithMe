@@ -2,10 +2,13 @@ package com.example.rokly.bakewithme;
 
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
+import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,11 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.rokly.bakewithme.Adapter.RecipeAdapter;
+import com.example.rokly.bakewithme.data.Ingredients;
 import com.example.rokly.bakewithme.data.Recipes;
+import com.example.rokly.bakewithme.provider.BakeContract;
+import com.example.rokly.bakewithme.provider.BakeDbHelper;
 import com.example.rokly.bakewithme.utilities.NetworkUtils;
 import com.example.rokly.bakewithme.utilities.RecipeJsonUtil;
-
-
+import static com.example.rokly.bakewithme.provider.BakeContract.BASE_CONTENT_URI;
+import static com.example.rokly.bakewithme.provider.BakeContract.PATH_BAKE;
+import static com.example.rokly.bakewithme.provider.BakeContract.BakeEntry.TABLE_NAME;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -107,6 +114,26 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
     private void loadRecipes(){
         new FetchRecipesTask().execute();
     }
+    
+    private void writeIngredientsToDatabase(Recipes currentRecipe){
+        BakeDbHelper dbHelper = new BakeDbHelper(this);
+        dbHelper.getWritableDatabase().delete(TABLE_NAME, null, null);
+
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(BakeContract.BakeEntry.COLUMN_INGREDIENT, currentRecipe.getName());
+        contentValues.put(BakeContract.BakeEntry.COLUMN_MEASURE, "");
+        contentValues.put(BakeContract.BakeEntry.COLUMN_QUANTITY, "");
+        getContentResolver().insert(BakeContract.BakeEntry.CONTENT_URI, contentValues);
+
+
+        for(Ingredients ingredients:currentRecipe.getIngredients()){
+            contentValues = new ContentValues();
+            contentValues.put(BakeContract.BakeEntry.COLUMN_INGREDIENT, ingredients.getIngredient());
+            contentValues.put(BakeContract.BakeEntry.COLUMN_MEASURE, ingredients.getMeasure());
+            contentValues.put(BakeContract.BakeEntry.COLUMN_QUANTITY, ingredients.getQuantity());
+            getContentResolver().insert(BakeContract.BakeEntry.CONTENT_URI, contentValues);
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -117,13 +144,9 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
 
     @Override
     public void onClick(Recipes currentRecipe) {
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(this);
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(new ComponentName(this, MainActivity.class));
-        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_image);
-
-        //Now update all widgets
-        BakeAppWidgetProvider.updateBakeWidgets(this, appWidgetManager, currentRecipe.getIngredients(),appWidgetIds);
-
+        writeIngredientsToDatabase(currentRecipe);
+        
+        BakeWidgetService.startActionUpdateBakeWidget(this, currentRecipe);
 
         Intent intentToStartDetailActivity = new Intent(this, RecipeDetailActivity.class);
         intentToStartDetailActivity.putExtra(Recipes.PARCELABLE_KEY, currentRecipe);

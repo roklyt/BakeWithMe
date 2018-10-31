@@ -75,7 +75,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         }
     }
 
-    private int getMeasureImage(String measureKind){
+    public static int getMeasureImage(String measureKind){
         int imageId;
 
         switch (measureKind){

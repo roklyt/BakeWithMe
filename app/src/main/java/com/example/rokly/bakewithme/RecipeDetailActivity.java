@@ -35,7 +35,12 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         Intent recipeIntent = getIntent();
         if (recipeIntent.hasExtra(Recipes.PARCELABLE_KEY)) {
             /* Get the current recipe data from the intent*/
-            currentRecipe = recipeIntent.getParcelableExtra(Recipes.PARCELABLE_KEY);
+            if(recipeIntent.hasExtra(BakeWidgetService.INGREDIENTS_EXTRA)){
+                currentRecipe = recipeIntent.getParcelableExtra(BakeWidgetService.INGREDIENTS_EXTRA);
+            }else{
+                currentRecipe = recipeIntent.getParcelableExtra(Recipes.PARCELABLE_KEY);
+            }
+
             RecipeDetailStepsFragment recipeDetailStepsFragment = new RecipeDetailStepsFragment();
             recipeDetailStepsFragment.setCurrentRecipe(currentRecipe);
             getSupportActionBar().setTitle(currentRecipe.getName());

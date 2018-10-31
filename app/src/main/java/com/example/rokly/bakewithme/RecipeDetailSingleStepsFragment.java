@@ -11,19 +11,16 @@ import android.support.v4.app.Fragment;
 import android.support.v4.media.session.MediaSessionCompat;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RemoteViews;
+import android.widget.RemoteViewsService;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.rokly.bakewithme.Adapter.StepsAdapter;
-import com.example.rokly.bakewithme.data.Recipes;
+import com.example.rokly.bakewithme.data.Ingredients;
 import com.example.rokly.bakewithme.data.Steps;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -44,7 +41,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener, View.OnClickListener{
 
@@ -339,4 +336,59 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
     }
 
 
+    public static class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
+
+        Context context;
+        List<Ingredients> ingredients;
+
+        public ListRemoteViewsFactory(Context applicationContext, List<Ingredients> ingredients){
+            context = applicationContext;
+            this.ingredients = ingredients;
+        }
+
+        @Override
+        public void onCreate() {
+
+        }
+
+        @Override
+        public void onDataSetChanged() {
+
+        }
+
+        @Override
+        public void onDestroy() {
+
+        }
+
+        @Override
+        public int getCount() {
+            return 0;
+        }
+
+        @Override
+        public RemoteViews getViewAt(int i) {
+            return null;
+        }
+
+        @Override
+        public RemoteViews getLoadingView() {
+            return null;
+        }
+
+        @Override
+        public int getViewTypeCount() {
+            return 0;
+        }
+
+        @Override
+        public long getItemId(int i) {
+            return 0;
+        }
+
+        @Override
+        public boolean hasStableIds() {
+            return false;
+        }
+    }
 }
