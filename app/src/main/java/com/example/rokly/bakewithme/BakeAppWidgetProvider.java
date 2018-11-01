@@ -3,41 +3,41 @@ package com.example.rokly.bakewithme;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.database.Cursor;
+import android.net.Uri;
 import android.widget.RemoteViews;
 
-import com.example.rokly.bakewithme.data.Ingredients;
 import com.example.rokly.bakewithme.data.Recipes;
+import com.example.rokly.bakewithme.provider.BakeContract;
 
-import java.util.ArrayList;
-import java.util.List;
+import static com.example.rokly.bakewithme.provider.BakeContract.BASE_CONTENT_URI;
+import static com.example.rokly.bakewithme.provider.BakeContract.PATH_BAKE;
 
 /**
  * Implementation of App Widget functionality.
  */
 public class BakeAppWidgetProvider extends AppWidgetProvider {
-    private static Intent intent;
+
+    public final static String OPENED_FROM_WIDGET = "openedFromWidget";
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, Recipes currentRecipe,
-                                int appWidgetId) {
+                                int appWidgetId, boolean hasRecipe) {
 
         // Construct the RemoteViews object
         RemoteViews views;
 
         Intent intent;
 
-
-        if(currentRecipe == null){
+        if (!hasRecipe) {
             views = new RemoteViews(context.getPackageName(), R.layout.bake_app_widget_provider);
 
-            views.setTextViewText(R.id.widget_textview, "Bakw with me");
-            intent  = new Intent(context, MainActivity.class);
+            views.setTextViewText(R.id.widget_textview, "Choose a recipe");
+            intent = new Intent(context, MainActivity.class);
             PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
-            views.setPendingIntentTemplate(R.id.list_widget_view, pendingIntent);
-        }else{
+            views.setOnClickPendingIntent(R.id.widget_textview, pendingIntent);
+        } else {
             views = getBakeListRemoteView(context, currentRecipe);
         }
 
@@ -49,31 +49,20 @@ public class BakeAppWidgetProvider extends AppWidgetProvider {
     private static RemoteViews getBakeListRemoteView(Context context, Recipes currentRecipe) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.bake_app_widget_list);
         // Set the ListWidgetService intent to act as the adapter for the ListView
-        intent = new Intent(context, ListWidgetService.class);
-
-        ArrayList<String> ingredientsArrayList = new ArrayList<String>();
-        ingredientsArrayList.add(currentRecipe.getName());
-        ArrayList<String> quantityArrayList = new ArrayList<String>();
-        quantityArrayList.add("");
-        ArrayList<String> measureIdArrayList = new ArrayList<String>();
-        measureIdArrayList.add("");
-
-        for(Ingredients ingredient:currentRecipe.getIngredients()){
-            ingredientsArrayList.add(ingredient.getIngredient());
-            quantityArrayList.add(ingredient.getQuantity());
-            measureIdArrayList.add(ingredient.getMeasure());
-        }
-
-        intent.putStringArrayListExtra(ListWidgetService.INGREDIENT_ARRAY_LIST,ingredientsArrayList);
-        intent.putStringArrayListExtra(ListWidgetService.QUANTITY_ARRAY_LIST,quantityArrayList);
-        intent.putStringArrayListExtra(ListWidgetService.MEASUERE_ARRAY_LIST,measureIdArrayList);
-        views.removeAllViews(R.id.list_widget_view);
+        Intent intent = new Intent(context, ListWidgetService.class);
         views.setRemoteAdapter(R.id.list_widget_view, intent);
 
         // Set the RecipeDetailActivity intent to launch when clicked
-        Intent appIntent = new Intent(context, RecipeDetailActivity.class);
-        appIntent.putExtra(BakeWidgetService.INGREDIENTS_EXTRA, currentRecipe);
-        appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent appIntent;
+        if (currentRecipe == null) {
+            appIntent = new Intent(context, MainActivity.class);
+        } else {
+            appIntent = new Intent(context, RecipeDetailActivity.class);
+            appIntent.putExtra(Recipes.PARCELABLE_KEY, currentRecipe);
+            appIntent.putExtra(OPENED_FROM_WIDGET, true);
+            appIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        }
+
 
         PendingIntent appPendingIntent = PendingIntent.getActivity(context, 0, appIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         views.setPendingIntentTemplate(R.id.list_widget_view, appPendingIntent);
@@ -84,17 +73,31 @@ public class BakeAppWidgetProvider extends AppWidgetProvider {
         return views;
     }
 
-    @Override
-    public void onReceive(Context context, Intent intent) {
-
-        super.onReceive(context, intent);
+    public static void updateBakeWidgets(Context context, AppWidgetManager appWidgetManager,
+                                         Recipes recipes, int[] appWidgetIds, boolean hasRecipe) {
+        for (int appWidgetId : appWidgetIds) {
+            updateAppWidget(context, appWidgetManager, recipes, appWidgetId, hasRecipe);
+        }
     }
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
+        Uri BAKE_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_BAKE).build();
+
+        Cursor cursor = context.getContentResolver().query(
+                BAKE_URI,
+                null,
+                null,
+                null,
+                BakeContract.BakeEntry.COLUMN_INGREDIENT
+        );
+
+        boolean hasRecipe = cursor.getCount() > 0;
+        cursor.close();
+
         for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, null, appWidgetId);
+            updateAppWidget(context, appWidgetManager, null, appWidgetId, hasRecipe);
         }
     }
 
@@ -106,13 +109,6 @@ public class BakeAppWidgetProvider extends AppWidgetProvider {
     @Override
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
-    }
-
-    public static void updateBakeWidgets(Context context, AppWidgetManager appWidgetManager,
-                                         Recipes recipes, int[] appWidgetIds) {
-        for (int appWidgetId : appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, recipes, appWidgetId);
-        }
     }
 }
 

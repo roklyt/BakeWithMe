@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.example.rokly.bakewithme.R;
 import com.example.rokly.bakewithme.data.Ingredients;
 
-import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -23,6 +22,39 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
 
     public IngredientsAdapter(List<Ingredients> ingredientsList) {
         IngredientsList = ingredientsList;
+    }
+
+    public static int getMeasureImage(String measureKind) {
+        int imageId;
+
+        switch (measureKind) {
+            case "CUP":
+                imageId = R.drawable.cup;
+                break;
+            case "TBLSP":
+                imageId = R.drawable.spoon;
+                break;
+            case "TSP":
+                imageId = R.drawable.teaspoon;
+                break;
+            case "K":
+                imageId = R.drawable.weight_kg;
+                break;
+            case "G":
+                imageId = R.drawable.weight_gramm;
+                break;
+            case "OZ":
+                imageId = R.drawable.weight_ounce;
+                break;
+            case "UNIT":
+                imageId = R.drawable.count;
+                break;
+            default:
+                imageId = R.drawable.question_mark;
+                break;
+        }
+
+        return imageId;
     }
 
     @Override
@@ -62,7 +94,7 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
         void onClick(Ingredients currentStep);
     }
 
-    public class IngredientsAdapterViewHolder extends RecyclerView.ViewHolder{
+    public class IngredientsAdapterViewHolder extends RecyclerView.ViewHolder {
         TextView IngredientsTextView;
         TextView QuantityTextView;
         ImageView MeasueTextView;
@@ -73,38 +105,5 @@ public class IngredientsAdapter extends RecyclerView.Adapter<IngredientsAdapter.
             QuantityTextView = view.findViewById(R.id.tv_ingredients_quantity);
             MeasueTextView = view.findViewById(R.id.iv_ingredients_measure);
         }
-    }
-
-    public static int getMeasureImage(String measureKind){
-        int imageId;
-
-        switch (measureKind){
-            case "CUP":
-                imageId = R.drawable.cup;
-                break;
-            case "TBLSP":
-                imageId = R.drawable.spoon;
-                break;
-            case "TSP":
-                imageId = R.drawable.teaspoon;
-                break;
-            case "K":
-                imageId = R.drawable.weight_kg;
-                break;
-            case "G":
-                imageId = R.drawable.weight_gramm;
-                break;
-            case "OZ":
-                imageId = R.drawable.weight_ounce;
-                break;
-            case "UNIT":
-                imageId = R.drawable.count;
-                break;
-            default:
-                imageId = R.drawable.question_mark;
-                break;
-        }
-
-        return imageId;
     }
 }

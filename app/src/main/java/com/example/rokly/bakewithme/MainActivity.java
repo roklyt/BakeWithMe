@@ -1,14 +1,10 @@
 package com.example.rokly.bakewithme;
 
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -24,15 +20,13 @@ import com.example.rokly.bakewithme.Adapter.RecipeAdapter;
 import com.example.rokly.bakewithme.data.Ingredients;
 import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.provider.BakeContract;
-import com.example.rokly.bakewithme.provider.BakeDbHelper;
 import com.example.rokly.bakewithme.utilities.NetworkUtils;
 import com.example.rokly.bakewithme.utilities.RecipeJsonUtil;
-import static com.example.rokly.bakewithme.provider.BakeContract.BASE_CONTENT_URI;
-import static com.example.rokly.bakewithme.provider.BakeContract.PATH_BAKE;
-import static com.example.rokly.bakewithme.provider.BakeContract.BakeEntry.TABLE_NAME;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements com.example.rokly.bakewithme.Adapter.RecipeAdapter.RecipeAdapterOnClickHandler {
 
@@ -57,22 +51,21 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
         ErrorMessageDisplay = findViewById(R.id.error_message);
 
 
-
         LoadingIndicator = findViewById(R.id.pb_loading_indicator);
-        if((RecyclerView = findViewById(R.id.recyclerview_main_linear)) != null ){
+        if ((RecyclerView = findViewById(R.id.recyclerview_main_linear)) != null) {
             RecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        }else{
+        } else {
             RecyclerView = findViewById(R.id.recyclerview_main_grid);
             RecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         }
 
 
-        if(savedInstanceState != null && savedInstanceState.containsKey(Recipes.PARCELABLE_KEY)){
+        if (savedInstanceState != null && savedInstanceState.containsKey(Recipes.PARCELABLE_KEY)) {
             List<Recipes> recipes = savedInstanceState.getParcelableArrayList(Recipes.PARCELABLE_KEY);
             RecipeAdapter = new RecipeAdapter(this, recipes);
             RecyclerView.setAdapter(RecipeAdapter);
             LoadingIndicator.setVisibility(View.GONE);
-        }else{
+        } else {
             RecipeAdapter = new RecipeAdapter(this, RecipesList);
             RecyclerView.setAdapter(RecipeAdapter);
 
@@ -100,7 +93,7 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
     private void showRecipeDataView() {
         /* First, make sure the error is invisible */
         ErrorMessageDisplay.setVisibility(View.INVISIBLE);
-        /* Then, make sure the movie data is visible */
+        /* Then, make sure the bake data is visible */
         RecyclerView.setVisibility(View.VISIBLE);
     }
 
@@ -111,13 +104,12 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
         ErrorMessageDisplay.setVisibility(View.VISIBLE);
     }
 
-    private void loadRecipes(){
+    private void loadRecipes() {
         new FetchRecipesTask().execute();
     }
-    
-    private void writeIngredientsToDatabase(Recipes currentRecipe){
-        BakeDbHelper dbHelper = new BakeDbHelper(this);
-        dbHelper.getWritableDatabase().delete(TABLE_NAME, null, null);
+
+    private void writeIngredientsToDatabase(Recipes currentRecipe) {
+        getContentResolver().delete(BakeContract.BakeEntry.CONTENT_URI, null, null);
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(BakeContract.BakeEntry.COLUMN_INGREDIENT, currentRecipe.getName());
@@ -126,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
         getContentResolver().insert(BakeContract.BakeEntry.CONTENT_URI, contentValues);
 
 
-        for(Ingredients ingredients:currentRecipe.getIngredients()){
+        for (Ingredients ingredients : currentRecipe.getIngredients()) {
             contentValues = new ContentValues();
             contentValues.put(BakeContract.BakeEntry.COLUMN_INGREDIENT, ingredients.getIngredient());
             contentValues.put(BakeContract.BakeEntry.COLUMN_MEASURE, ingredients.getMeasure());
@@ -145,16 +137,18 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
     @Override
     public void onClick(Recipes currentRecipe) {
         writeIngredientsToDatabase(currentRecipe);
-        
+
         BakeWidgetService.startActionUpdateBakeWidget(this, currentRecipe);
 
         Intent intentToStartDetailActivity = new Intent(this, RecipeDetailActivity.class);
         intentToStartDetailActivity.putExtra(Recipes.PARCELABLE_KEY, currentRecipe);
+        intentToStartDetailActivity.putExtra(BakeAppWidgetProvider.OPENED_FROM_WIDGET, false);
         startActivity(intentToStartDetailActivity);
     }
 
     /* Async Task to make an url request against the given link to get the recipe list*/
     public class FetchRecipesTask extends AsyncTask<String, Void, List<Recipes>> {
+
 
         @Override
         protected void onPreExecute() {
@@ -166,11 +160,11 @@ public class MainActivity extends AppCompatActivity implements com.example.rokly
         protected List<Recipes> doInBackground(String... params) {
 
             /* build the url */
-            URL movieRequestUrl = NetworkUtils.buildUrl();
+            URL recipeRequestUrl = NetworkUtils.buildUrl();
 
             try {
                 String jsonRecipeResponse = NetworkUtils
-                        .getResponseFromHttpUrl(movieRequestUrl);
+                        .getResponseFromHttpUrl(recipeRequestUrl);
 
                 return RecipeJsonUtil
                         .getRecipeListFromJson(jsonRecipeResponse);

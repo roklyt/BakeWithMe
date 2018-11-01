@@ -4,18 +4,14 @@ import android.content.Intent;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.rokly.bakewithme.data.Recipes;
-import com.example.rokly.bakewithme.data.Steps;
 
-public class RecipeDetailSingleActivity extends AppCompatActivity implements  RecipeDetailSingleStepsFragment.OnButtonClickListener{
-    private static Recipes ingredients;
+public class RecipeDetailSingleActivity extends AppCompatActivity implements RecipeDetailSingleStepsFragment.OnButtonClickListener {
+    static Recipes ingredients;
     private static Recipes currentRecipe;
     private static int position;
-    public static final String POSITION = "position" ;
+    public static final String POSITION = "position";
     public static final String STEPS = "steps";
     public static final String INGREDIENTS = "ingredients";
     public static final String RECIPE_NAME = "recipeName";
@@ -30,17 +26,19 @@ public class RecipeDetailSingleActivity extends AppCompatActivity implements  Re
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         Intent intent = getIntent();
 
-        if(intent.hasExtra(RECIPE_NAME)){
+        if (intent.hasExtra(RECIPE_NAME)) {
             getSupportActionBar().setTitle(intent.getStringExtra(RECIPE_NAME));
         }
 
-        if (intent.hasExtra(STEPS)){
+        if (intent.hasExtra(STEPS)) {
             setContentView(R.layout.activity_recipe_detail_steps);
-            if(savedInstanceState == null) {
+            if (savedInstanceState == null) {
                 currentRecipe = intent.getParcelableExtra(STEPS);
                 position = intent.getIntExtra(POSITION, 0);
                 RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
@@ -53,16 +51,28 @@ public class RecipeDetailSingleActivity extends AppCompatActivity implements  Re
                         .add(R.id.step_container_single, recipeDetailSingleStepsFragment)
                         .commit();
             }
-        }else if(intent.hasExtra(INGREDIENTS)){
-            setContentView(R.layout.activity_recipe_detail_ingredients);
-            ingredients = intent.getParcelableExtra(INGREDIENTS);
-            RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
-            recipeDetailIngredientsFragment.setCurrentRecipe(ingredients);
-            recipeDetailIngredientsFragment.setContext(this);
+        } else if (intent.hasExtra(INGREDIENTS)) {
+            if (savedInstanceState == null) {
+                setContentView(R.layout.activity_recipe_detail_ingredients);
+                ingredients = intent.getParcelableExtra(INGREDIENTS);
+                RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
+                recipeDetailIngredientsFragment.setCurrentRecipe(ingredients);
+                recipeDetailIngredientsFragment.setContext(this);
 
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.ingredients_container_single, recipeDetailIngredientsFragment)
-                    .commit();
+                getSupportFragmentManager().beginTransaction()
+                        .add(R.id.ingredients_container_single, recipeDetailIngredientsFragment)
+                        .commit();
+            }else{
+                setContentView(R.layout.activity_recipe_detail_ingredients);
+                ingredients = intent.getParcelableExtra(INGREDIENTS);
+                RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
+                recipeDetailIngredientsFragment.setCurrentRecipe(ingredients);
+                recipeDetailIngredientsFragment.setContext(this);
+
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.ingredients_container_single, recipeDetailIngredientsFragment)
+                        .commit();
+            }
         }
     }
 
@@ -97,20 +107,20 @@ public class RecipeDetailSingleActivity extends AppCompatActivity implements  Re
         }
     }
 
-    private void calculateNewPosition(int buttonId){
+    private void calculateNewPosition(int buttonId) {
         int stepsSize = currentRecipe.getSteps().size();
-        switch (buttonId){
+        switch (buttonId) {
             case R.id.back_button:
-                if(position == 0){
-                    position = stepsSize -1;
-                }else {
+                if (position == 0) {
+                    position = stepsSize - 1;
+                } else {
                     position = position - 1;
                 }
                 break;
             case R.id.forward_button:
-                if(position == stepsSize -1){
+                if (position == stepsSize - 1) {
                     position = 0;
-                }else {
+                } else {
                     position = position + 1;
                 }
                 break;

@@ -32,8 +32,8 @@ public class RecipeJsonUtil {
 
         /* Ingredient object */
         final String RECIPE_INGREDIENTS = "ingredients";
-        final String INGREDIENT_QUANTITY= "quantity";
-        final String INGREDIENT_MEASURE= "measure";
+        final String INGREDIENT_QUANTITY = "quantity";
+        final String INGREDIENT_MEASURE = "measure";
         final String INGREDIENT_INGREDIENT = "ingredient";
 
         /* Steps object*/
@@ -47,7 +47,7 @@ public class RecipeJsonUtil {
 
         List<Recipes> recipes = new ArrayList<>();
 
-        //Iterate through all array objects and grep the movie data
+        //Iterate through all array objects and grep the recipe data
         for (int i = 0; i < jsonArray.length(); i++) {
             List<Ingredients> ingredients = new ArrayList<>();
             List<Steps> steps = new ArrayList<>();
@@ -63,7 +63,7 @@ public class RecipeJsonUtil {
 
             /* Get the list of ingredients*/
             JSONArray ingredientArray = recipeObject.getJSONArray(RECIPE_INGREDIENTS);
-            for(int x = 0; x < ingredientArray.length(); x++){
+            for (int x = 0; x < ingredientArray.length(); x++) {
                 JSONObject ingredientObject = ingredientArray.getJSONObject(x);
 
                 String quantity = getQuantity(ingredientObject.getDouble(INGREDIENT_QUANTITY));
@@ -75,7 +75,7 @@ public class RecipeJsonUtil {
 
             /* Get the list of steps*/
             JSONArray stepsArray = recipeObject.getJSONArray(RECIPE_STEPS);
-            for(int x = 0; x < stepsArray.length(); x++){
+            for (int x = 0; x < stepsArray.length(); x++) {
                 JSONObject stepObject = stepsArray.getJSONObject(x);
 
                 int stepid = stepObject.getInt(STEP_ID);
@@ -92,7 +92,7 @@ public class RecipeJsonUtil {
         return recipes;
     }
 
-    private static String getQuantity(double num){
+    private static String getQuantity(double num) {
         long iPart;
         double fPart;
         String returnString;
@@ -100,9 +100,9 @@ public class RecipeJsonUtil {
         iPart = (long) num;
         fPart = num - iPart;
 
-        if(fPart == 0){
+        if (fPart == 0) {
             returnString = String.valueOf(iPart);
-        }else{
+        } else {
             returnString = String.valueOf(num);
         }
 

@@ -3,14 +3,13 @@ package com.example.rokly.bakewithme.provider;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 import com.example.rokly.bakewithme.provider.BakeContract.BakeEntry;
 
 public class BakeDbHelper extends SQLiteOpenHelper {
 
-    // The database name
     private static final String DATABASE_NAME = "bakewithme.db";
 
-    // If you change the database schema, you must increment the database version
     private static final int DATABASE_VERSION = 1;
 
     // Constructor

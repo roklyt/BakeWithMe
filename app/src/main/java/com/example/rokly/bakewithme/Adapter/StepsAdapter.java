@@ -8,21 +8,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.rokly.bakewithme.R;
-import com.example.rokly.bakewithme.data.Recipes;
 import com.example.rokly.bakewithme.data.Steps;
 
 import java.util.List;
 
 public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsAdapterViewHolder> {
 
+    private static int currentPosition;
     private final StepsAdapter.StepsAdapterOnClickHandler ClickHandler;
     /* List for all steps*/
     private List<Steps> StepsList;
+    private Context context;
 
 
-    public StepsAdapter(StepsAdapter.StepsAdapterOnClickHandler clickHandler, List<Steps> stepsList) {
+    public StepsAdapter(StepsAdapter.StepsAdapterOnClickHandler clickHandler, List<Steps> stepsList, Context context, int currentPosition) {
         ClickHandler = clickHandler;
         StepsList = stepsList;
+        this.context = context;
+        this.currentPosition = currentPosition;
     }
 
     @Override
@@ -39,13 +42,16 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsAdapter
     @Override
     public void onBindViewHolder(StepsAdapter.StepsAdapterViewHolder forecastAdapterViewHolder, int position) {
 
-        if(position == 0){
-            forecastAdapterViewHolder.StepsTextView.setText("Ingredients");
-        }else{
-            /*Get the current movie to find the correct poster path */
-            Steps steps = StepsList.get(position -1);
+        if (position == 0) {
+            forecastAdapterViewHolder.StepsTextView.setText(R.string.ingredients);
+        } else if (position == currentPosition) {
+            Steps steps = StepsList.get(position - 1);
 
-            /* Set the text from the recipe to the textview */
+            forecastAdapterViewHolder.StepsTextView.setText(steps.getShortDescription());
+            forecastAdapterViewHolder.StepsTextView.setBackgroundColor(context.getResources().getColor(R.color.colorAccent));
+        } else {
+            Steps steps = StepsList.get(position - 1);
+
             forecastAdapterViewHolder.StepsTextView.setText(steps.getShortDescription());
         }
 
@@ -78,7 +84,7 @@ public class StepsAdapter extends RecyclerView.Adapter<StepsAdapter.StepsAdapter
 
         @Override
         public void onClick(View v) {
-            ClickHandler.onClick(getAdapterPosition() -1, v);
+            ClickHandler.onClick(getAdapterPosition() - 1, v);
         }
     }
 }

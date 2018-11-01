@@ -9,7 +9,6 @@ import java.util.List;
 public class Recipes implements Parcelable {
 
 
-
     public static final String PARCELABLE_KEY = "parcelable_key";
     public final static Parcelable.Creator<Recipes> CREATOR = new Parcelable.Creator<Recipes>() {
 
@@ -54,9 +53,17 @@ public class Recipes implements Parcelable {
         return Name;
     }
 
-    public List<Ingredients> getIngredients(){return Ingredients;};
+    public List<Ingredients> getIngredients() {
+        return Ingredients;
+    }
 
-    public List<Steps> getSteps(){return Steps;};
+    ;
+
+    public List<Steps> getSteps() {
+        return Steps;
+    }
+
+    ;
 
     @Override
     public int describeContents() {

@@ -3,8 +3,6 @@ package com.example.rokly.bakewithme.data;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-
 public class Ingredients implements Parcelable {
 
     public final static Parcelable.Creator<Ingredients> CREATOR = new Parcelable.Creator<Ingredients>() {

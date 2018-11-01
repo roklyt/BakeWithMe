@@ -2,7 +2,6 @@ package com.example.rokly.bakewithme.data;
 
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.VisibleForTesting;
 
 public class Steps implements Parcelable {
 

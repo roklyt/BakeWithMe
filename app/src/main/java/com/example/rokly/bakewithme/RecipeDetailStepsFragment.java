@@ -1,7 +1,6 @@
 package com.example.rokly.bakewithme;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -10,20 +9,16 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Recipes;
-import com.example.rokly.bakewithme.data.Steps;
 
-import java.util.List;
-
-public class RecipeDetailStepsFragment extends Fragment implements com.example.rokly.bakewithme.Adapter.StepsAdapter.StepsAdapterOnClickHandler{
+public class RecipeDetailStepsFragment extends Fragment implements com.example.rokly.bakewithme.Adapter.StepsAdapter.StepsAdapterOnClickHandler {
 
     private static Recipes currentRecipe;
     private RecyclerView recyclerView;
-    private StepsAdapter stepsAdapter;
+    StepsAdapter stepsAdapter;
+    private static int currentPosition;
 
     private static final String CURRENT_RECIPE = "currentRecipe";
 
@@ -60,7 +55,7 @@ public class RecipeDetailStepsFragment extends Fragment implements com.example.r
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        if(savedInstanceState != null){
+        if (savedInstanceState != null) {
             currentRecipe = savedInstanceState.getParcelable(CURRENT_RECIPE);
         }
 
@@ -70,7 +65,7 @@ public class RecipeDetailStepsFragment extends Fragment implements com.example.r
 
         recyclerView = rootView.findViewById(R.id.rv_detail_steps);
         recyclerView.setLayoutManager(new LinearLayoutManager(recipeDetailActivity.getApplicationContext()));
-        stepsAdapter = new StepsAdapter(this, currentRecipe.getSteps());
+        stepsAdapter = new StepsAdapter(this, currentRecipe.getSteps(), getContext(), currentPosition);
         recyclerView.setAdapter(stepsAdapter);
 
         // Return the root view
@@ -80,6 +75,8 @@ public class RecipeDetailStepsFragment extends Fragment implements com.example.r
     @Override
     public void onClick(int position, View view) {
         setBackground();
+        view.findViewById(R.id.recipe_text_recyclerview).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+
         mCallback.onImageSelected(position, view);
     }
 
@@ -89,13 +86,20 @@ public class RecipeDetailStepsFragment extends Fragment implements com.example.r
         outState.putParcelable(CURRENT_RECIPE, currentRecipe);
     }
 
-    public void setCurrentRecipe(Recipes currentRecipe){
-      this.currentRecipe = currentRecipe;
+    public void setCurrentPosition(int currentPosition) {
+        this.currentPosition = currentPosition;
     }
 
-    private void setBackground(){
-            for(int i = 0; i < recyclerView.getLayoutManager().getChildCount(); i++){
+    public void setCurrentRecipe(Recipes currentRecipe) {
+        this.currentRecipe = currentRecipe;
+    }
+
+    private void setBackground() {
+        if(recyclerView.getLayoutManager() != null){
+            for (int i = 0; i < recyclerView.getLayoutManager().getChildCount(); i++) {
                 recyclerView.getLayoutManager().getChildAt(i).findViewById(R.id.recipe_text_recyclerview).setBackgroundColor(getResources().getColor(R.color.colorTextIcons));
             }
+        }
+
     }
 }

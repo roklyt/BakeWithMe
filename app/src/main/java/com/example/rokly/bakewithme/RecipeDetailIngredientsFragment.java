@@ -8,22 +8,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.example.rokly.bakewithme.Adapter.IngredientsAdapter;
-import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Ingredients;
 import com.example.rokly.bakewithme.data.Recipes;
-import com.example.rokly.bakewithme.data.Steps;
 
 import java.util.List;
 
 public class RecipeDetailIngredientsFragment extends Fragment {
 
     private static Recipes currentRecipe;
-    private static List<Ingredients> ingredients;
-    private RecyclerView recyclerView;
-    private IngredientsAdapter ingredientsAdapter;
+    RecyclerView recyclerView;
+    IngredientsAdapter ingredientsAdapter;
     private Context context;
 
     // Mandatory empty constructor
@@ -48,11 +44,11 @@ public class RecipeDetailIngredientsFragment extends Fragment {
         return rootView;
     }
 
-    public void setCurrentRecipe(Recipes currentRecipe){
+    public void setCurrentRecipe(Recipes currentRecipe) {
         this.currentRecipe = currentRecipe;
     }
 
-    public void setContext(Context context){
+    public void setContext(Context context) {
         this.context = context;
     }
 

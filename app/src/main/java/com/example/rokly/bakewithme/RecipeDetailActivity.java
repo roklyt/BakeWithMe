@@ -3,22 +3,21 @@ package com.example.rokly.bakewithme;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.rokly.bakewithme.Adapter.StepsAdapter;
 import com.example.rokly.bakewithme.data.Recipes;
-import com.example.rokly.bakewithme.data.Steps;
 
-public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener{
+public class RecipeDetailActivity extends AppCompatActivity implements RecipeDetailStepsFragment.OnImageClickListener, RecipeDetailSingleStepsFragment.OnButtonClickListener {
 
     private Recipes currentRecipe;
     private static boolean twoPane = false;
-    private static String SHOW_STEPS = "showIngredients";
+    private static final String SHOW_STEPS = "showIngredients";
+    private static final String STEPS_POSITION = "stepsPosition";
     private static boolean showStep;
+    private static boolean openedFromWidget;
+    private static int currentPosition;
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -30,27 +29,38 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if(getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         Intent recipeIntent = getIntent();
         if (recipeIntent.hasExtra(Recipes.PARCELABLE_KEY)) {
             /* Get the current recipe data from the intent*/
-            if(recipeIntent.hasExtra(BakeWidgetService.INGREDIENTS_EXTRA)){
+            if (recipeIntent.hasExtra(BakeWidgetService.INGREDIENTS_EXTRA)) {
                 currentRecipe = recipeIntent.getParcelableExtra(BakeWidgetService.INGREDIENTS_EXTRA);
-            }else{
+            } else {
                 currentRecipe = recipeIntent.getParcelableExtra(Recipes.PARCELABLE_KEY);
+            }
+
+            openedFromWidget = recipeIntent.getBooleanExtra(BakeAppWidgetProvider.OPENED_FROM_WIDGET, false);
+
+            if (savedInstanceState != null) {
+                currentPosition = savedInstanceState.getInt(STEPS_POSITION);
+            } else {
+                currentPosition = 1;
             }
 
             RecipeDetailStepsFragment recipeDetailStepsFragment = new RecipeDetailStepsFragment();
             recipeDetailStepsFragment.setCurrentRecipe(currentRecipe);
+            recipeDetailStepsFragment.setCurrentPosition(currentPosition);
             getSupportActionBar().setTitle(currentRecipe.getName());
         }
 
         setContentView(R.layout.activity_recipe_detail);
 
-        if(findViewById(R.id.step_container) != null){
+        if (findViewById(R.id.step_container) != null) {
 
-            if(savedInstanceState == null) {
+            if (savedInstanceState == null) {
                 twoPane = true;
                 showStep = true;
                 RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
@@ -63,37 +73,54 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
                         .commit();
 
                 showSteps();
-            }else if(!savedInstanceState.getBoolean(SHOW_STEPS)){
+            } else if (!savedInstanceState.getBoolean(SHOW_STEPS)) {
                 showStep = false;
-                RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
+/*                RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
                 recipeDetailIngredientsFragment.setContext(this);
                 recipeDetailIngredientsFragment.setCurrentRecipe(currentRecipe);
                 getSupportFragmentManager().beginTransaction()
                         .add(R.id.ingredients_container, recipeDetailIngredientsFragment)
-                        .commit();
+                        .commit();*/
                 showIngredients();
-            }else{
+            } else {
                 showStep = true;
                 showSteps();
             }
-        }else{
+        } else {
             twoPane = false;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                if (openedFromWidget) {
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    onBackPressed();
+                }
+                break;
+        }
+        return true;
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(SHOW_STEPS, showStep);
+        outState.putInt(STEPS_POSITION, currentPosition);
     }
 
     @Override
     public void onImageSelected(int position, View view) {
-        view.findViewById(R.id.recipe_text_recyclerview).setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        currentPosition = position;
 
-        if(position < 0){
+        if (position < 0) {
+            if (twoPane) {
 
-            if(twoPane){
                 showIngredients();
                 RecipeDetailIngredientsFragment recipeDetailIngredientsFragment = new RecipeDetailIngredientsFragment();
                 recipeDetailIngredientsFragment.setContext(this);
@@ -103,15 +130,15 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
                         .commit();
 
 
-            }else{
+            } else {
                 final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
                 intent.putExtra(RecipeDetailSingleActivity.INGREDIENTS, currentRecipe);
                 intent.putExtra(RecipeDetailSingleActivity.RECIPE_NAME, currentRecipe.getName());
                 startActivity(intent);
             }
-        }else{
+        } else {
 
-            if(twoPane){
+            if (twoPane) {
                 showSteps();
                 RecipeDetailSingleStepsFragment recipeDetailSingleStepsFragment = new RecipeDetailSingleStepsFragment();
                 recipeDetailSingleStepsFragment.setCurrentStep(currentRecipe.getSteps().get(position));
@@ -122,7 +149,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
                         .replace(R.id.step_container, recipeDetailSingleStepsFragment)
                         .commit();
 
-            }else{
+            } else {
                 final Intent intent = new Intent(this, RecipeDetailSingleActivity.class);
                 intent.putExtra(RecipeDetailSingleActivity.STEPS, currentRecipe);
                 intent.putExtra(RecipeDetailSingleActivity.POSITION, position);
@@ -133,7 +160,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
 
     }
 
-    private void showIngredients(){
+    private void showIngredients() {
         showStep = false;
         FrameLayout stepsFrameLayout = findViewById(R.id.step_container);
         stepsFrameLayout.setVisibility(View.GONE);
@@ -142,7 +169,7 @@ public class RecipeDetailActivity extends AppCompatActivity implements RecipeDet
         ingredientsFrameLayout.setVisibility(View.VISIBLE);
     }
 
-    private void showSteps(){
+    private void showSteps() {
         showStep = true;
         FrameLayout ingredientsFrameLayout = findViewById(R.id.ingredients_container);
         ingredientsFrameLayout.setVisibility(View.GONE);

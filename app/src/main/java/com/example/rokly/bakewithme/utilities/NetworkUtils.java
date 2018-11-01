@@ -13,15 +13,14 @@ import java.util.Scanner;
 public class NetworkUtils {
 
     private static final String TAG = NetworkUtils.class.getSimpleName();
-    private static final String BASE_MOVIE_URL =
+    private static final String BASE_RECIPE_URL =
             "https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/baking.json";
 
     /**
      * Builds the URL used to talk to the recipe database server.
-     *
      */
     public static URL buildUrl() {
-        Uri builtUri = Uri.parse(BASE_MOVIE_URL).buildUpon()
+        Uri builtUri = Uri.parse(BASE_RECIPE_URL).buildUpon()
                 .build();
 
         URL url = null;

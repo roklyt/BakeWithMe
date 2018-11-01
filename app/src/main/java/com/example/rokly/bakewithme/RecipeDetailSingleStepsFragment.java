@@ -43,15 +43,15 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
-public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener, View.OnClickListener{
+public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlayer.EventListener, View.OnClickListener {
 
     private static final String TAG = RecipeDetailSingleStepsFragment.class.getSimpleName();
     private static Steps currentStep;
-    private TextView textView;
+    TextView textView;
     private SimpleExoPlayer exoPlayer;
     private SimpleExoPlayerView playerView;
     private static MediaSessionCompat mediaSession;
-    private PlaybackStateCompat.Builder stateBuilder;
+    PlaybackStateCompat.Builder stateBuilder;
     private Context context;
     private final static String CURRENT_POSITION = "currentPosition";
     private final static String CURRENT_URL = "currentUrl";
@@ -84,6 +84,7 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
                     + " must implement OnImageClickListener");
         }
     }
+
     // Inflates the detail view
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -97,9 +98,9 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
         videoUrl = currentStep.getVideoUrl();
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
             currentPostion = 0;
-        }else if(videoUrl.equals(savedInstanceState.getString(CURRENT_URL))){
+        } else if (videoUrl.equals(savedInstanceState.getString(CURRENT_URL))) {
             currentPostion = savedInstanceState.getLong(CURRENT_POSITION);
         }
 
@@ -117,35 +118,35 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         ImageButton forwardButton = rootView.findViewById(R.id.forward_button);
         forwardButton.setOnClickListener(this);
 
-        if(!isPhone){
+        if (!isPhone) {
             backButton.setVisibility(View.GONE);
             forwardButton.setVisibility(View.GONE);
-        }else{
-            if(currentStep.getId() == size -1){
+        } else {
+            if (currentStep.getId() == size - 1) {
                 forwardButton.setVisibility(View.GONE);
             }
-            if(currentStep.getId() == 0){
+            if (currentStep.getId() == 0) {
                 backButton.setVisibility(View.GONE);
             }
         }
 
-        if(videoUrl == null || videoUrl.equals("")){
+        if (videoUrl == null || videoUrl.equals("")) {
             playerView.setDefaultArtwork(BitmapFactory.decodeResource
                     (getResources(), R.drawable.no_video));
-        }else{
+        } else {
             playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FIT);
-            if(isLandscape() && isPhone){
+            if (isLandscape() && isPhone) {
                 backButton.setVisibility(View.GONE);
                 forwardButton.setVisibility(View.GONE);
                 textView.setVisibility(View.GONE);
                 playerView.setLayoutParams(new ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, ConstraintLayout.LayoutParams.MATCH_PARENT));
                 playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-                ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+                ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
                 if (Build.VERSION.SDK_INT > 16) {
-                    ((AppCompatActivity)getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    ((AppCompatActivity) getActivity()).getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                }else{
-                    View decorView = ((AppCompatActivity)getActivity()).getWindow().getDecorView();
+                } else {
+                    View decorView = ((AppCompatActivity) getActivity()).getWindow().getDecorView();
                     // Hide the status bar.
                     int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
                     decorView.setSystemUiVisibility(uiOptions);
@@ -157,23 +158,23 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         return rootView;
     }
 
-    public void setCurrentStep(Steps currentStep){
+    public void setCurrentStep(Steps currentStep) {
         this.currentStep = currentStep;
     }
 
-    public void setContext(Context context){
+    public void setContext(Context context) {
         this.context = context;
     }
 
-    public void setSize(int size){
+    public void setSize(int size) {
         this.size = size;
     }
 
-    public void setPhone(boolean isPhone){
+    public void setPhone(boolean isPhone) {
         this.isPhone = isPhone;
     }
 
-    private boolean isLandscape(){
+    private boolean isLandscape() {
         int orientation = getResources().getConfiguration().orientation;
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             return true;
@@ -221,6 +222,7 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
 
     /**
      * Initialize ExoPlayer.
+     *
      * @param mediaUri The URI of the sample to play.
      */
     private void initializePlayer(Uri mediaUri) {
@@ -341,7 +343,7 @@ public class RecipeDetailSingleStepsFragment extends Fragment implements ExoPlay
         Context context;
         List<Ingredients> ingredients;
 
-        public ListRemoteViewsFactory(Context applicationContext, List<Ingredients> ingredients){
+        public ListRemoteViewsFactory(Context applicationContext, List<Ingredients> ingredients) {
             context = applicationContext;
             this.ingredients = ingredients;
         }
